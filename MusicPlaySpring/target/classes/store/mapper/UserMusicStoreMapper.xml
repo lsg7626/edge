@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+  <mapper namespace = "store.mapper.UserMusicStoreMapper">
+  <resultMap type="Music" id = "musicMap">
+		<id column="id" property="id"/>
+		<result column="name" property="name"/>
+		<result column="artist_name" property="artist"/>
+		<result column="album_title" property="album"/>
+		<result column="image" property="image"/>
+		<result column="agent_name" property="agent"/>
+	</resultMap>
+  	<sql id = "selectMusic">
+		SELECT id, name, artist_name, album_title, image, agent_name
+		FROM music_tb
+	</sql>
+  	<insert id="create">
+  		INSERT INTO user_music_tb
+  		VALUES (#{musicId}, #{userId})
+  	</insert>
+  	
+  	<select id="existUserMusic" resultType="String">
+  		SELECT user_id
+  		FROM user_music_tb
+  		WHERE music_id = #{musicId}
+  		AND user_id = #{userId}
+  	</select>
+  	
+  	<select id = "readMusicsByUser" parameterType="String" resultMap="musicMap">
+  		<include refid="selectMusic"/>
+  		where id IN
+  		(SELECT music_id
+  		FROM user_music_tb
+  		WHERE user_id = #{userId})
+  	</select>
+  	
+  	<delete id="delete">
+  		DELETE FROM user_music_tb
+  		WHERE music_id = #{musicId}
+  		AND user_id = #{userId}
+  	</delete>
+  </mapper>  
